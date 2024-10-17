@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: graceful-place-search
+
+server:
+  undertow:
+    threads:
+      io: 8
+      worker: 128
+    direct-buffers: true
+  port: 8080
