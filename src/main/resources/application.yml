@@ -9,3 +9,16 @@ server:
       worker: 128
     direct-buffers: true
   port: 8080
+
+place:
+  api:
+    kakao:
+      key: "KakaoAK ee7cb1753cf90b82bcd6b8d22077a54d"
+    naver:
+      id: "RY_eugq1q7ek7P2_eAoo"
+      secret: "C6K0RF11Yc"
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework.web.client: DEBUG
