@@ -29,4 +29,9 @@ public class NaverPlaceSearchApiResponse implements PlaceSearchApiResponse {
 		private String mapx;
 		private String mapy;
 	}
+
+	@Override
+	public List<Item> getResults() {
+		return this.items;
+	}
 }

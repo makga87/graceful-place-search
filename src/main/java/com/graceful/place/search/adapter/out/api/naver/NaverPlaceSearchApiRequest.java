@@ -11,9 +11,9 @@ import com.graceful.place.search.adapter.out.api.PlaceSearchApiRequest;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class NaverPlaceSearchApiRequest implements PlaceSearchApiRequest {
 	private String query;
-	private String display;
+	private Integer display;
 
-	public static NaverPlaceSearchApiRequest of(String query, String display) {
+	public static NaverPlaceSearchApiRequest of(String query, Integer display) {
 		return new NaverPlaceSearchApiRequest(query, display);
 	}
 
