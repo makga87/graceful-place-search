@@ -1,32 +1,27 @@
 package com.graceful.place.search.adapter.out.api;
 
 
-import org.springframework.beans.factory.annotation.Qualifier;
+import java.util.Map;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import com.graceful.place.search.application.port.out.PlaceSearchPort;
 import com.graceful.place.search.domain.SearchApiType;
 
-@RequiredArgsConstructor
+@Component
 public class PlaceSearchApiFactory {
 
-	@Qualifier("kakaoPlaceSearchAdapter")
-	private final PlaceSearchPort kakaoPlaceSearchAdapter;
+	private final Map<SearchApiType, PlaceSearchPort<PlaceSearchApiRequest, PlaceSearchApiResponse<?>>> portMap;
 
-	@Qualifier("naverPlaceSearchAdapter")
-	private final PlaceSearchPort naverPlaceSearchAdapter;
+	public PlaceSearchApiFactory(@Qualifier("kakaoPlaceSearchAdapter") PlaceSearchPort kakaoPlaceSearchAdapter,
+								 @Qualifier("naverPlaceSearchAdapter") PlaceSearchPort naverPlaceSearchAdapter) {
 
+		this.portMap = Map.of(SearchApiType.KAKAO, kakaoPlaceSearchAdapter,
+							  SearchApiType.NAVER, naverPlaceSearchAdapter);
+	}
 
 	public PlaceSearchPort getSearchApi(SearchApiType searchApiType) {
-
-		switch (searchApiType) {
-			case KAKAO:
-				return kakaoPlaceSearchAdapter;
-			case NAVER:
-				return naverPlaceSearchAdapter;
-			default:
-				return null;
-		}
+		return portMap.get(searchApiType);
 	}
 }
