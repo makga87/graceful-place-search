@@ -1,6 +1,9 @@
 spring:
   application:
     name: graceful-place-search
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
 
 server:
   undertow:
@@ -22,3 +25,5 @@ logging:
   level:
     root: DEBUG
     org.springframework.web.client: DEBUG
+    org.ehcache: DEBUG
+    org.springframework.cache: DEBUG
