@@ -29,6 +29,9 @@ dependencies {
     }
     implementation("org.springframework.boot:spring-boot-starter-undertow")
     compileOnly("org.projectlombok:lombok")
+    testCompileOnly ("org.projectlombok:lombok")
+    testAnnotationProcessor ("org.projectlombok:lombok")
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
