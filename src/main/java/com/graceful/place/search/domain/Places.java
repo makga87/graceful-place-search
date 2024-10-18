@@ -32,7 +32,14 @@ public class Places {
 		// 새로운 장소들을 처리
 		for (Place newPlace : places) {
 			placeMap.merge(newPlace.getPlaceName(), newPlace, (existing, added) -> {
-				return Place.of(existing.getPlaceName(), existing.getPriorityScore() + added.getPriorityScore());
+				return Place.builder()
+							.placeName(existing.getPlaceName())
+							.address(existing.getAddress())
+							.roadAddress(existing.getRoadAddress())
+							.x(existing.getX())
+							.y(existing.getY())
+							.priorityScore(existing.getPriorityScore() + added.getPriorityScore())
+							.build();
 			});
 		}
 

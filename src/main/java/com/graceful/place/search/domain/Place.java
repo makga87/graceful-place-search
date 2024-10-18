@@ -3,18 +3,21 @@ package com.graceful.place.search.domain;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Place implements Comparable<Place> {
 
 	private String placeName;
+	private String address;
+	private String roadAddress;
+	private Double x;
+	private Double y;
 	private int priorityScore;
-
-	public static Place of(String placeName, int priorityScore) {
-		return new Place(placeName, priorityScore);
-	}
+	private SearchApiType searchApiType;
 
 	public void plusScore() {
 		this.priorityScore++;

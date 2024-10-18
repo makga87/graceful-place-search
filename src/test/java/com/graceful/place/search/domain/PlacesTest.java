@@ -14,10 +14,26 @@ class PlacesTest {
 	@DisplayName("장소들 순서가 우선순위 점수에 따라 내림차순 정렬됨을 확인한다.")
 	@Test
 	void testSortedPlaces() {
-		Place p1 = Place.of("A", 1);
-		Place p2 = Place.of("B", 4);
-		Place p3 = Place.of("C", 2);
-		Place p4 = Place.of("D", 6);
+
+		Place p1 = Place.builder()
+						.placeName("A")
+						.priorityScore(1)
+						.build();
+
+		Place p2 = Place.builder()
+						.placeName("B")
+						.priorityScore(4)
+						.build();
+
+		Place p3 = Place.builder()
+						.placeName("C")
+						.priorityScore(2)
+						.build();
+
+		Place p4 = Place.builder()
+						.placeName("D")
+						.priorityScore(6)
+						.build();
 
 		Places places = Places.from(Arrays.asList(p1, p2, p3, p4));
 
@@ -30,13 +46,36 @@ class PlacesTest {
 	@DisplayName("장소들을 병합 시, 중복 장소는 점수가 가산되어 내림차순 정렬됨을 확인한다. 동점일 경우, 장소명을 알파벳 역순으로 정렬한다.")
 	@Test
 	void testMergedSortedPlaces() {
-		Place p1 = Place.of("A", 1);
-		Place p2 = Place.of("B", 1);
-		Place p3 = Place.of("C", 1);
 
-		Place p4 = Place.of("A", 2);
-		Place p5 = Place.of("D", 2);
-		Place p6 = Place.of("Z", 2);
+		Place p1 = Place.builder()
+						.placeName("A")
+						.priorityScore(1)
+						.build();
+
+		Place p2 = Place.builder()
+						.placeName("B")
+						.priorityScore(1)
+						.build();
+
+		Place p3 = Place.builder()
+						.placeName("C")
+						.priorityScore(1)
+						.build();
+
+		Place p4 = Place.builder()
+						.placeName("A")
+						.priorityScore(2)
+						.build();
+
+		Place p5 = Place.builder()
+						.placeName("D")
+						.priorityScore(2)
+						.build();
+
+		Place p6 = Place.builder()
+						.placeName("Z")
+						.priorityScore(2)
+						.build();
 
 		Places place1 = Places.from(Arrays.asList(p1, p2, p3));
 		List<Place> place2 = Arrays.asList(p4, p5, p6);
