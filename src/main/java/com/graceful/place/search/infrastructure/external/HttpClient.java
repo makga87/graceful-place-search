@@ -7,5 +7,5 @@ import org.springframework.http.HttpHeaders;
 
 public interface HttpClient {
 
-	<R> R get(String url, Map<String, String> param, HttpHeaders headers, Class<R> returnType);
+	<R> R get(String url, Map<String, Object> param, HttpHeaders headers, Class<R> returnType);
 }

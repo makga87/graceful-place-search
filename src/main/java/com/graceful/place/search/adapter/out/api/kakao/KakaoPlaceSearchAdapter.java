@@ -23,7 +23,7 @@ public class KakaoPlaceSearchAdapter implements PlaceSearchPort<KakaoPlaceSearch
 
 	@Override
 	public KakaoPlaceSearchApiResponse searchPlaces(KakaoPlaceSearchApiRequest request) {
-		Map<String, String> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("query", request.getKeyword());
 
 		HttpHeaders headers = new HttpHeaders();

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,13 +16,14 @@ import com.graceful.place.search.infrastructure.external.HttpClient;
 
 
 @RequiredArgsConstructor
+@Component
 public class NaverPlaceSearchAdapter implements PlaceSearchPort<NaverPlaceSearchApiRequest, NaverPlaceSearchApiResponse> {
 
 	private final HttpClient httpClient;
 
 	@Override
 	public NaverPlaceSearchApiResponse searchPlaces(NaverPlaceSearchApiRequest request) {
-		Map<String, String> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("query", request.getQuery());
 		params.put("display", request.getDisplay());
 

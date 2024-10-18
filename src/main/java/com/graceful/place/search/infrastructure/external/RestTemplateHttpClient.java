@@ -19,7 +19,7 @@ public class RestTemplateHttpClient implements HttpClient {
 	private final RestTemplate restTemplate;
 
 	@Override
-	public <R> R get(String url, Map<String, String> params, HttpHeaders headers, Class<R> returnType) {
+	public <R> R get(String url, Map<String, Object> params, HttpHeaders headers, Class<R> returnType) {
 
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
 		params.forEach(builder::queryParam);
