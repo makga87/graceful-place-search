@@ -1,5 +1,10 @@
 package com.graceful.place.search.adapter.out.api;
 
 
-public interface PlaceSearchApiResponse {
+import java.util.List;
+
+public interface PlaceSearchApiResponse<T> {
+
+	List<T> getResults();
+
 }

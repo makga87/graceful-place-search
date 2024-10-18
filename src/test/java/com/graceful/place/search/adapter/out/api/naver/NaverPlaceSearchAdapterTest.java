@@ -23,7 +23,7 @@ class NaverPlaceSearchAdapterTest {
 	void testNaverPlaceSearchAdapter() {
 
 		NaverPlaceSearchAdapter naverPlaceSearchAdapter = new NaverPlaceSearchAdapter(restTemplateHttpClient);
-		NaverPlaceSearchApiResponse response = naverPlaceSearchAdapter.searchPlaces(NaverPlaceSearchApiRequest.of("은행", "5"));
+		NaverPlaceSearchApiResponse response = naverPlaceSearchAdapter.searchPlaces(NaverPlaceSearchApiRequest.of("은행", 5));
 
 		assertNotNull(response);
 		assertTrue(response.getTotal() > 0);
