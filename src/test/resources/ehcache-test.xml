@@ -10,18 +10,6 @@
         <ehcache:expiry>
             <ehcache:ttl unit="minutes">5</ehcache:ttl>
         </ehcache:expiry>
-        <ehcache:listeners>
-            <ehcache:listener>
-                <ehcache:class>com.graceful.place.search.infrastructure.cache.KeywordCacheEventListener</ehcache:class>
-                <ehcache:event-firing-mode>SYNCHRONOUS</ehcache:event-firing-mode>
-                <ehcache:event-ordering-mode>UNORDERED</ehcache:event-ordering-mode>
-                <ehcache:events-to-fire-on>CREATED</ehcache:events-to-fire-on>
-                <ehcache:events-to-fire-on>UPDATED</ehcache:events-to-fire-on>
-                <ehcache:events-to-fire-on>EXPIRED</ehcache:events-to-fire-on>
-                <ehcache:events-to-fire-on>REMOVED</ehcache:events-to-fire-on>
-                <ehcache:events-to-fire-on>EVICTED</ehcache:events-to-fire-on>
-            </ehcache:listener>
-        </ehcache:listeners>
 
         <ehcache:resources>
             <ehcache:heap unit="entries">1000</ehcache:heap>

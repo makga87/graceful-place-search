@@ -7,17 +7,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import lombok.extern.slf4j.Slf4j;
 
 import com.graceful.place.search.domain.Keyword;
+import com.graceful.place.search.testContext.TestContext;
 
 @Slf4j
-@SpringBootTest
-@ActiveProfiles("test")
-class KeywordCachingServiceTest {
+class KeywordCachingServiceTest extends TestContext {
 
 	@Autowired
 	private KeywordCachingService keywordCachingService;

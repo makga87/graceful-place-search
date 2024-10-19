@@ -1,10 +1,10 @@
 package com.graceful.place.search;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class GracefulPlaceSearchApplicationTests {
+import com.graceful.place.search.testContext.TestContext;
+
+class GracefulPlaceSearchApplicationTests extends TestContext {
 
 	@Test
 	void contextLoads() {
