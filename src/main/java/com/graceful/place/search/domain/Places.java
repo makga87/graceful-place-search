@@ -43,7 +43,6 @@ public class Places {
 			});
 		}
 
-		// 결과를 다시 큐에 추가
 		sortedPlaces.addAll(placeMap.values());
 
 	}

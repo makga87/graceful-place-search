@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import com.graceful.place.search.application.SearchCriteria;
+import com.graceful.place.search.application.port.in.KeywordCachingUseCase;
 import com.graceful.place.search.application.port.in.PlaceSearchUseCase;
 import com.graceful.place.search.domain.Places;
 
@@ -22,8 +23,12 @@ public class PlaceSearchController {
 	@Qualifier("placeSearchService")
 	private final PlaceSearchUseCase placeSearchService;
 
+	@Qualifier("keywordCachingService")
+	private final KeywordCachingUseCase keywordCachingService;
+
 	@GetMapping
 	public ResponseEntity<Places> search(@RequestParam("q") String q) {
+		keywordCachingService.incrementKeywordCache(q);
 		Places places = placeSearchService.placeSearch(SearchCriteria.builder()
 																	 .keyword(q)
 																	 .size(5)

@@ -4,17 +4,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
 import lombok.extern.slf4j.Slf4j;
 
 import com.graceful.place.search.infrastructure.external.RestTemplateHttpClient;
+import com.graceful.place.search.testContext.TestContext;
 
 @Slf4j
-@SpringBootTest
 @Import({RestTemplateHttpClient.class})
-class NaverPlaceSearchAdapterTest {
+class NaverPlaceSearchAdapterTest extends TestContext {
 
 	@Autowired
 	public RestTemplateHttpClient restTemplateHttpClient;

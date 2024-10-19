@@ -2,12 +2,12 @@
 spring:
   config:
     activate:
-      on-profile: default
+      on-profile: test
   application:
     name: graceful-place-search
   cache:
     jcache:
-      config: /ehcache.xml
+      config: /ehcache-test.xml
   jmx:
     enabled=true:
 
@@ -34,4 +34,3 @@ logging:
     org.ehcache: DEBUG
     org.springframework.cache: DEBUG
 
----
