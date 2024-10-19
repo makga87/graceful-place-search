@@ -1,26 +1,35 @@
 package com.graceful.place.search.application.service;
 
+
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.graceful.place.search.application.port.in.KeywordCachingUseCase;
+
 @Service
-public class KeywordCachingService {
+public class KeywordCachingService implements KeywordCachingUseCase {
 
-	private final Cache<String, Integer> keywordCountCache;
+	private final Cache<String, Long> keywordCountCache;
 
-	public KeywordCachingService(@Qualifier("ehCacheManager") CacheManager cacheManager) {
-		this.keywordCountCache = cacheManager.getCache("PLACE_SEARCH_KEYWORD_COUNTER", String.class, Integer.class);
+	public KeywordCachingService(@Qualifier("ehCacheManager") CacheManager ehCacheManager) {
+		this.keywordCountCache = ehCacheManager.getCache("PLACE_SEARCH_KEYWORD_COUNTER", String.class, Long.class);
 	}
 
-	public Integer incrementAndGetCount(String keyword) {
+	@Override
+	public Long cacheKeyword(String keyword) {
 		return keywordCountCache.invoke(keyword, ((entry, objects) -> {
-			Integer currentCount = (Integer) entry.getValue();
-			Integer newCount = currentCount == null ? 1 : currentCount + 1;
+			Long currentCount = (Long) entry.getValue();
+			Long newCount = currentCount == null ? 1 : currentCount + 1;
 			entry.setValue(newCount);
 			return newCount;
 		}));
+	}
+
+	@Override
+	public void evictKeyword(String cacheKey) {
+		keywordCountCache.remove(cacheKey);
 	}
 }

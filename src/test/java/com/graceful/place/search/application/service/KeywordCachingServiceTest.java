@@ -15,12 +15,26 @@ class KeywordCachingServiceTest {
 
 	@Test
 	void testKeywordCaching() {
-		Integer first = keywordCachingService.incrementAndGetCount("A");
-		Integer second = keywordCachingService.incrementAndGetCount("A");
-		Integer third = keywordCachingService.incrementAndGetCount("A");
+		String keyword = "A";
+		Long first = keywordCachingService.cacheKeyword(keyword);
+		Long second = keywordCachingService.cacheKeyword(keyword);
+		Long third = keywordCachingService.cacheKeyword(keyword);
 
-		assertEquals(1, first);
-		assertEquals(2, second);
-		assertEquals(3, third);
+		assertEquals(1L, first);
+		assertEquals(2L, second);
+		assertEquals(3L, third);
 	}
+
+	@Test
+	void testEvictKeywordCaching() {
+		String keyword = "B";
+		Long first = keywordCachingService.cacheKeyword(keyword);
+		keywordCachingService.evictKeyword(keyword);
+		Long second = keywordCachingService.cacheKeyword(keyword);
+
+		assertEquals(1L, first);
+		assertEquals(1L, second);
+	}
+
+
 }

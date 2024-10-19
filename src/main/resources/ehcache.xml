@@ -8,7 +8,7 @@
 
     </service>
 
-    <persistence directory="classpath:persistenceCache"/>
+    <persistence directory="persistenceCache"/>
 
     <cache-template name="default">
         <expiry>
@@ -21,10 +21,38 @@
         </resources>
     </cache-template>
 
-    <cache alias="PLACE_SEARCH_KEYWORD_COUNTER" uses-template="default">
+    <cache-template name="keywordCounter">
+        <expiry>
+            <ttl unit="hours">24</ttl>
+        </expiry>
+        <listeners>
+            <listener>
+                <class>com.graceful.place.search.infrastructure.cache.KeywordCacheEventListener</class>
+                <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+            </listener>
+        </listeners>
+
+        <resources>
+            <heap unit="entries">1000</heap>
+            <offheap unit="MB">10</offheap>
+            <disk unit="MB" persistent="true">20</disk>
+        </resources>
+    </cache-template>
+
+    <cache alias="PLACE_SEARCH_KEYWORD_COUNTER"
+           uses-template="keywordCounter">
         <key-type>java.lang.String</key-type>
-        <value-type>java.lang.Integer</value-type>
+        <value-type>java.lang.Long</value-type>
+
         <jsr107:mbeans enable-statistics="true"/>
 
     </cache>
+
+
 </config>

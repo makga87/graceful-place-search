@@ -4,6 +4,8 @@ spring:
   cache:
     jcache:
       config: classpath:ehcache.xml
+  jmx:
+    enabled=true:
 
 server:
   undertow:
