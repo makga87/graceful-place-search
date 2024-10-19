@@ -28,7 +28,7 @@ public class PlaceSearchController {
 
 	@GetMapping
 	public ResponseEntity<Places> search(@RequestParam("q") String q) {
-		keywordCachingService.cacheKeyword(q);
+		keywordCachingService.incrementKeywordCache(q);
 		Places places = placeSearchService.placeSearch(SearchCriteria.builder()
 																	 .keyword(q)
 																	 .size(5)
