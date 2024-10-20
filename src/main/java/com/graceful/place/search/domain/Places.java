@@ -1,6 +1,7 @@
 package com.graceful.place.search.domain;
 
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class Places {
+public class Places implements Serializable {
+	private static final long serialVersionUID = 3242186197833745290L;
 	private final PriorityQueue<Place> sortedPlaces = new PriorityQueue<>(5);
 
 	private Places(List<Place> places) {

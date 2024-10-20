@@ -8,7 +8,26 @@
 
     <ehcache:persistence directory="persistence"/>
 
-    <ehcache:cache-template name="keywordCounter">
+    <ehcache:cache-template name="PLACE_SEARCH_TEMPLATE">
+        <ehcache:expiry>
+            <ehcache:ttl unit="hours">24</ehcache:ttl>
+        </ehcache:expiry>
+
+        <ehcache:resources>
+            <ehcache:heap unit="entries">1000</ehcache:heap>
+            <ehcache:offheap unit="MB">50</ehcache:offheap>
+            <ehcache:disk unit="MB" persistent="true">50</ehcache:disk>
+        </ehcache:resources>
+    </ehcache:cache-template>
+
+    <ehcache:cache alias="PLACE_SEARCH"
+                   uses-template="PLACE_SEARCH_TEMPLATE">
+        <ehcache:key-type>java.lang.String</ehcache:key-type>
+        <ehcache:value-type>java.lang.Long</ehcache:value-type>
+    </ehcache:cache>
+
+
+    <ehcache:cache-template name="PLACE_SEARCH_KEYWORD_COUNTER_TEMPLATE">
         <ehcache:expiry>
             <ehcache:ttl unit="minutes">5</ehcache:ttl>
         </ehcache:expiry>
@@ -21,7 +40,7 @@
     </ehcache:cache-template>
 
     <ehcache:cache alias="PLACE_SEARCH_KEYWORD_COUNTER"
-                   uses-template="keywordCounter">
+                   uses-template="PLACE_SEARCH_KEYWORD_COUNTER_TEMPLATE">
         <ehcache:key-type>java.lang.String</ehcache:key-type>
         <ehcache:value-type>java.lang.Long</ehcache:value-type>
     </ehcache:cache>

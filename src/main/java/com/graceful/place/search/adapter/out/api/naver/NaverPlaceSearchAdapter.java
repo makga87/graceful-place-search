@@ -23,6 +23,7 @@ public class NaverPlaceSearchAdapter implements PlaceSearchPort<NaverPlaceSearch
 
 	@Override
 	public NaverPlaceSearchApiResponse searchPlaces(NaverPlaceSearchApiRequest request) {
+
 		Map<String, Object> params = new HashMap<>();
 		params.put("query", request.getQuery());
 		params.put("display", request.getDisplay());
