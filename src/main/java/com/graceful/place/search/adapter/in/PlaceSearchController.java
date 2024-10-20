@@ -1,6 +1,8 @@
 package com.graceful.place.search.adapter.in;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import com.graceful.place.search.application.SearchCriteria;
 import com.graceful.place.search.application.port.in.KeywordCachingUseCase;
 import com.graceful.place.search.application.port.in.PlaceSearchUseCase;
+import com.graceful.place.search.domain.Keyword;
 import com.graceful.place.search.domain.Places;
 
 @RequiredArgsConstructor
@@ -35,5 +38,12 @@ public class PlaceSearchController {
 																	 .build());
 
 		return ResponseEntity.ok(places);
+	}
+
+	@GetMapping("/search/keywords")
+	public ResponseEntity<List<Keyword>> searchKewords() {
+		List<Keyword> keywords = keywordCachingService.getTopKeywords(10);
+
+		return ResponseEntity.ok(keywords);
 	}
 }
