@@ -40,6 +40,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("javax.cache:cache-api")
     implementation("org.ehcache:ehcache:3.10.0")
+
+    implementation("org.jsoup:jsoup:1.18.1")
+    implementation("org.apache.commons:commons-text:1.12.0")
+
+
+
 }
 
 tasks.withType<Test> {

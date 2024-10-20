@@ -1,6 +1,8 @@
 package com.graceful.place.search.application.mapper;
 
 
+import org.jsoup.Jsoup;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +20,7 @@ public class NaverPlaceMapper implements PlaceMapper<NaverPlaceSearchApiResponse
 	@Override
 	public Place toPlace(NaverPlaceSearchApiResponse.Item item) {
 		return Place.builder()
-					.placeName(item.getTitle())
+					.placeName(Jsoup.parse(item.getTitle()).text())
 					.address(item.getAddress())
 					.roadAddress(item.getRoadAddress())
 					.x(Double.parseDouble(item.getMapx()))

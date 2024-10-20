@@ -14,7 +14,7 @@ import lombok.ToString;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Keyword implements Comparable<Keyword>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -8232378705653702061L;
 	private String keyword;
 	private Long count;
 

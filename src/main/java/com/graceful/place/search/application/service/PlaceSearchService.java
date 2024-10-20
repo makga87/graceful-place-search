@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import com.graceful.place.search.domain.Place;
 import com.graceful.place.search.domain.Places;
 import com.graceful.place.search.domain.SearchApiType;
 
+@CacheConfig(cacheNames = "PLACE_SEARCH")
 @RequiredArgsConstructor
 @Service
 public class PlaceSearchService implements PlaceSearchUseCase {
@@ -35,6 +37,7 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 		mappers = Map.of(SearchApiType.KAKAO, KakaoPlaceMapper.init(),
 						 SearchApiType.NAVER, NaverPlaceMapper.init());
 	}
+
 
 	@Override
 	public Places placeSearch(SearchCriteria searchCriteria) {
@@ -52,8 +55,7 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 	private <T> List<Place> getPlaces(SearchApiType searchApiType, SearchCriteria searchCriteria) {
 
 		PlaceSearchApiRequest request = createPlaceSearchRequest(searchApiType, searchCriteria);
-		PlaceSearchApiResponse<T> response = placeSearchApiFactory.getSearchApi(searchApiType)
-																  .searchPlaces(request);
+		PlaceSearchApiResponse<T> response = placeSearchApiFactory.getSearchApi(searchApiType).searchPlaces(request);
 
 		PlaceMapper<T> mapper = (PlaceMapper<T>) mappers.get(searchApiType);
 
@@ -61,8 +63,6 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 					   .filter(Objects::nonNull)
 					   .map(mapper::toPlace)
 					   .collect(Collectors.toList());
-
-
 	}
 
 	private PlaceSearchApiRequest createPlaceSearchRequest(SearchApiType searchApiType, SearchCriteria searchCriteria) {
