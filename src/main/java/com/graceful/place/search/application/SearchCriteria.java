@@ -13,4 +13,11 @@ public class SearchCriteria {
 	private Integer page;
 	private Integer size;
 
+
+	public Integer getSize() {
+		if (size == null) {
+			return 5;
+		}
+		return size;
+	}
 }
