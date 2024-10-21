@@ -17,6 +17,6 @@ class LocationSimilarityCheckerTest {
 
 		LocationSimilarityChecker checker = new LocationSimilarityChecker();
 
-		assertEquals(expected, checker.isSimilarLocation(aX, bX) && checker.isSimilarLocation(aY, bY));
+		assertEquals(expected, checker.isSimilarLocation(aX, aY, bX, bY));
 	}
 }

@@ -21,8 +21,8 @@ public class KakaoPlaceMapper implements PlaceMapper<KakaoPlaceSearchApiResponse
 					.placeName(document.getPlaceName())
 					.address(document.getAddressName())
 					.roadAddress(document.getRoadAddressName())
-					.x(Double.parseDouble(document.getX()))
-					.y(Double.parseDouble(document.getY()))
+					.x(document.getX())
+					.y(document.getY())
 					.priorityScore(1)
 					.searchApiType(SearchApiType.KAKAO)
 					.build();

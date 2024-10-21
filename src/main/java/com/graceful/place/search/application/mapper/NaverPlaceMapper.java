@@ -23,8 +23,8 @@ public class NaverPlaceMapper implements PlaceMapper<NaverPlaceSearchApiResponse
 					.placeName(Jsoup.parse(item.getTitle()).text())
 					.address(item.getAddress())
 					.roadAddress(item.getRoadAddress())
-					.x(Double.parseDouble(item.getMapx()))
-					.y(Double.parseDouble(item.getMapy()))
+					.x(item.getMapx())
+					.y(item.getMapy())
 					.searchApiType(SearchApiType.NAVER)
 					.build();
 	}

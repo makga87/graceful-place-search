@@ -2,57 +2,39 @@ package com.graceful.place.search.domain;
 
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.stream.Collectors;
+import java.util.Objects;
 import java.util.stream.Stream;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
+
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Places implements Serializable {
-	private static final long serialVersionUID = 3242186197833745290L;
-	private final PriorityQueue<Place> sortedPlaces = new PriorityQueue<>(5);
 
-	private Places(List<Place> places) {
-		this.sortedPlaces.addAll(places);
-	}
+	private static final long serialVersionUID = 3242186197833745290L;
+	private final List<Place> placeList;
 
 	public static Places from(List<Place> places) {
 		return new Places(places);
 	}
 
-	public void merge(List<Place> places) {
-		Map<String, Place> placeMap = new HashMap<>();
-
-		// 기존 큐의 요소들을 맵으로 변환
-		while (!sortedPlaces.isEmpty()) {
-			Place place = sortedPlaces.poll();
-			placeMap.put(place.getPlaceName(), place);
-		}
-
-		// 새로운 장소들을 처리
-		for (Place newPlace : places) {
-			placeMap.merge(newPlace.getPlaceName(), newPlace, (existing, added) -> {
-				return Place.builder()
-							.placeName(existing.getPlaceName())
-							.address(existing.getAddress())
-							.roadAddress(existing.getRoadAddress())
-							.x(existing.getX())
-							.y(existing.getY())
-							.priorityScore(existing.getPriorityScore() + added.getPriorityScore())
-							.build();
-			});
-		}
-
-		sortedPlaces.addAll(placeMap.values());
-
+	public List<Place> getPlaceList() {
+		return this.placeList;
 	}
 
-	public List<Place> getSortedPlaces() {
-		return Stream.generate(sortedPlaces::poll)
-					 .limit(sortedPlaces.size())
-					 .collect(Collectors.toList());
+	public int size() {
+		return placeList.size();
 	}
 
+	public Stream<Place> getAsStream() {
+		return placeList.stream();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(new HashSet<>(placeList));
+	}
 }

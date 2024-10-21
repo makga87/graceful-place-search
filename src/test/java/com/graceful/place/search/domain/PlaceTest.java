@@ -1,6 +1,6 @@
 package com.graceful.place.search.domain;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,25 +43,26 @@ class PlaceTest {
 		assertEquals(1, placeB.compareTo(placeA));
 	}
 
-	@DisplayName("장소의 유사도에 따른, 같은장소 여부를 판단한다")
-	@ParameterizedTest
-	@CsvSource({
-			"신동궁감자탕뼈숯불구이 선릉직영점, 신동궁 <b>감자탕</b> 뼈숯불구이 선릉직영점, 서울 강남구 대치동 890-44, 서울특별시 강남구 대치동 890-44 1층 신동궁감자탕 뼈숯불구이,서울 강남구 선릉로86길 39, 서울특별시 강남구 선릉로86길 39 1층 신동궁감자탕 뼈숯불구이, true"
-	})
-	void testEquals(String placeA, String placeB, String addrA, String addrB, String roadAddrA, String roadAddrB, boolean expected) {
+	@DisplayName("장소의 유사도에 따른, 같은 장소 여부를 판단한다")
+	@Test
+	void testEquals() {
 		Place place1 = Place.builder()
-							.placeName(placeA)
-							.address(addrA)
-							.roadAddress(roadAddrA)
+							.placeName("신동궁감자탕뼈숯불구이 선릉직영점")
+							.address("서울 강남구 대치동 890-44")
+							.roadAddress("서울 강남구 선릉로86길 39")
+							.x("127.052892633601")
+							.y("37.5040848203409")
 							.build();
 
 		Place place2 = Place.builder()
-							.placeName(placeB)
-							.address(addrB)
-							.roadAddress(roadAddrB)
+							.placeName("신동궁 <b>감자탕</b> 뼈숯불구이 선릉직영점")
+							.address("서울특별시 강남구 대치동 890-44 1층 신동궁감자탕 뼈숯불구이")
+							.roadAddress("서울특별시 강남구 선릉로86길 39 1층 신동궁감자탕 뼈숯불구이")
+							.x("1270529113")
+							.y("375040863")
 							.build();
 
-		assertEquals(expected, place1.equals(place2));
+		assertTrue(place1.equals(place2));
 	}
 
 }
