@@ -9,4 +9,8 @@ public class ApiProperties {
 	public static final String NAVER_CLIENT_ID = "RY_eugq1q7ek7P2_eAoo";
 	public static final String NAVER_CLIENT_SECRET = "C6K0RF11Yc";
 
+	public static final int SIZE = 5;
+	public static final int TOTAL_SIZE = 10;
+
+
 }

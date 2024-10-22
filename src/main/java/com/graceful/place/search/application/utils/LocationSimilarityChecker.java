@@ -3,7 +3,6 @@ package com.graceful.place.search.application.utils;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,7 +11,12 @@ public class LocationSimilarityChecker {
 
 	private static final BigDecimal SIMILAR_VALUE = BigDecimal.valueOf(0.9999);
 
-	public boolean isSimilarLocation(String a, String b) {
+
+	public static boolean isSimilarLocation(String x, String y, String targetX, String targetY) {
+		return isSimilarLocation(x, targetX) && isSimilarLocation(y, targetY);
+	}
+
+	private static boolean isSimilarLocation(String a, String b) {
 
 		if (StringUtils.isEmpty(a) || StringUtils.isEmpty(b)) {
 			return false;

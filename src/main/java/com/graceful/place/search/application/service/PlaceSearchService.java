@@ -1,15 +1,21 @@
 package com.graceful.place.search.application.service;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import com.graceful.place.search.adapter.out.api.PlaceSearchApiFactory;
 import com.graceful.place.search.adapter.out.api.PlaceSearchApiRequest;
@@ -20,17 +26,31 @@ import com.graceful.place.search.application.SearchCriteria;
 import com.graceful.place.search.application.mapper.KakaoPlaceMapper;
 import com.graceful.place.search.application.mapper.NaverPlaceMapper;
 import com.graceful.place.search.application.mapper.PlaceMapper;
+import com.graceful.place.search.application.merger.PlacesMergeStrategy;
 import com.graceful.place.search.application.port.in.PlaceSearchUseCase;
+import com.graceful.place.search.application.slicer.PlacesSliceStrategy;
 import com.graceful.place.search.domain.Place;
 import com.graceful.place.search.domain.Places;
 import com.graceful.place.search.domain.SearchApiType;
+import com.graceful.place.search.infrastructure.config.ApiProperties;
 
+@Slf4j
 @CacheConfig(cacheNames = "PLACE_SEARCH")
 @RequiredArgsConstructor
 @Service
 public class PlaceSearchService implements PlaceSearchUseCase {
 
+	@Qualifier("placesMergeManager")
+	private final PlacesMergeStrategy placesMergeManager;
+
+	@Qualifier("placesSliceManager")
+	private final PlacesSliceStrategy placesSliceManager;
+
 	private final PlaceSearchApiFactory placeSearchApiFactory;
+
+	@Qualifier("taskExecutor")
+	private final Executor taskExecutor;
+
 	private static final Map<SearchApiType, PlaceMapper<?>> mappers;
 
 	static {
@@ -38,31 +58,38 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 						 SearchApiType.NAVER, NaverPlaceMapper.init());
 	}
 
-
+	@Cacheable(key = "#searchCriteria.keyword")
 	@Override
 	public Places placeSearch(SearchCriteria searchCriteria) {
 
-		List<Place> kakaoPlaces = getPlaces(SearchApiType.KAKAO, searchCriteria);
-		List<Place> naverPlaces = getPlaces(SearchApiType.NAVER, searchCriteria);
+		CompletableFuture<List<Place>> kakaoPlaceList = getPlaces(SearchApiType.KAKAO, searchCriteria);
+		CompletableFuture<List<Place>> naverPlaceList = getPlaces(SearchApiType.NAVER, searchCriteria);
 
-		Places places = Places.from(kakaoPlaces);
-		places.merge(naverPlaces);
+		List<Place> slicedNaverPlaces = placesSliceManager.slice(naverPlaceList.join(), ApiProperties.SIZE);
 
-		return places;
+		List<Place> kakaoPlaces = kakaoPlaceList.join();
+		List<Place> slicedKakaoPlaces = placesSliceManager.slice(kakaoPlaces, kakaoPlaces.size() - slicedNaverPlaces.size());
+
+		return Places.from(placesMergeManager.merge(slicedKakaoPlaces, slicedNaverPlaces));
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> List<Place> getPlaces(SearchApiType searchApiType, SearchCriteria searchCriteria) {
+	private <T> CompletableFuture<List<Place>> getPlaces(SearchApiType searchApiType, SearchCriteria searchCriteria) {
 
 		PlaceSearchApiRequest request = createPlaceSearchRequest(searchApiType, searchCriteria);
 		PlaceSearchApiResponse<T> response = placeSearchApiFactory.getSearchApi(searchApiType).searchPlaces(request);
 
 		PlaceMapper<T> mapper = (PlaceMapper<T>) mappers.get(searchApiType);
 
-		return response.getResults().stream()
-					   .filter(Objects::nonNull)
-					   .map(mapper::toPlace)
-					   .collect(Collectors.toList());
+		return CompletableFuture.supplyAsync(() -> response.getResults().stream()
+														   .filter(Objects::nonNull)
+														   .map(mapper::toPlace)
+														   .collect(Collectors.toList()),
+											 taskExecutor)
+								.exceptionally(ex -> {
+									log.error("Error occurred request {} API", searchApiType.name(), ex);
+									return Collections.EMPTY_LIST;
+								});
 	}
 
 	private PlaceSearchApiRequest createPlaceSearchRequest(SearchApiType searchApiType, SearchCriteria searchCriteria) {
@@ -75,4 +102,6 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 				throw new IllegalArgumentException("Not support api type");
 		}
 	}
+
+
 }

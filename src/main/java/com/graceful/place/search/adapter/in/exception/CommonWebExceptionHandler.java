@@ -27,4 +27,12 @@ public class CommonWebExceptionHandler {
 							 .body(new ErrorResponse(ex.getMessage()));
 
 	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorResponse> handleException(IllegalStateException ex) {
+		log.error(ex.getMessage(), ex);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+							 .body(new ErrorResponse(ex.getMessage()));
+
+	}
 }
