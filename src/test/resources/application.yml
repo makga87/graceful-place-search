@@ -7,7 +7,7 @@ spring:
     name: graceful-place-search
   cache:
     jcache:
-      config: /ehcache-test.xml
+      config: ehcache-test.xml
 
 server:
   undertow:

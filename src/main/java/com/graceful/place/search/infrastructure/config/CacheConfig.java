@@ -32,9 +32,8 @@ public class CacheConfig {
 	public CacheManager defaultEhCacheManager(@Value("${spring.cache.jcache.config}") String configPath) throws Exception {
 		CachingProvider provider = Caching.getCachingProvider();
 		ClassPathResource cacheConfigResource = new ClassPathResource(configPath);
-		File cacheConfigFile = cacheConfigResource.getFile();
 
-		return provider.getCacheManager(cacheConfigFile.toURI(), getClass().getClassLoader());
+		return provider.getCacheManager(cacheConfigResource.getURI(), getClass().getClassLoader());
 	}
 
 }
