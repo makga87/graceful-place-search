@@ -3,8 +3,10 @@ package com.graceful.place.search.adapter.out.api.kakao;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.graceful.place.search.adapter.out.api.PlaceSearchApiResponse;
@@ -15,8 +17,9 @@ public class KakaoPlaceSearchApiResponse implements PlaceSearchApiResponse<Kakao
 	private List<Document> documents;
 	private Meta meta;
 
-	@Getter
-	@Setter
+	@Builder
+	@AllArgsConstructor
+	@Data
 	public static class Document {
 		@JsonProperty("address_name")
 		private String addressName;
@@ -35,8 +38,7 @@ public class KakaoPlaceSearchApiResponse implements PlaceSearchApiResponse<Kakao
 		private String y;
 	}
 
-	@Getter
-	@Setter
+	@Data
 	public static class Meta {
 		private boolean isEnd;
 		private int pageableCount;
@@ -44,8 +46,7 @@ public class KakaoPlaceSearchApiResponse implements PlaceSearchApiResponse<Kakao
 		@JsonProperty("total_count")
 		private int totalCount;
 
-		@Getter
-		@Setter
+		@Data
 		public static class SameName {
 			private String keyword;
 			private List<String> region;

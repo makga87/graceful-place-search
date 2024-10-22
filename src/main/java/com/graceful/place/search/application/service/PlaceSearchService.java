@@ -62,34 +62,34 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 	@Override
 	public List<Place> placeSearch(SearchCriteria searchCriteria) {
 
-		CompletableFuture<List<Place>> kakaoPlaceList = getPlaces(SearchApiType.KAKAO, searchCriteria);
-		CompletableFuture<List<Place>> naverPlaceList = getPlaces(SearchApiType.NAVER, searchCriteria);
+		List<Place> kakaoPlaceList = getPlaces(SearchApiType.KAKAO, searchCriteria);
+		List<Place> naverPlaceList = getPlaces(SearchApiType.NAVER, searchCriteria);
 
-		List<Place> slicedNaverPlaces = placesSliceManager.slice(naverPlaceList.join(), config.getSize().getByApi());
-
-		List<Place> kakaoPlaces = kakaoPlaceList.join();
-		List<Place> slicedKakaoPlaces = placesSliceManager.slice(kakaoPlaces, kakaoPlaces.size() - slicedNaverPlaces.size());
+		List<Place> slicedNaverPlaces = placesSliceManager.slice(naverPlaceList, config.getSize().getByApi());
+		List<Place> slicedKakaoPlaces = placesSliceManager.slice(kakaoPlaceList, kakaoPlaceList.size() - slicedNaverPlaces.size());
 
 		return placesMergeManager.merge(slicedKakaoPlaces, slicedNaverPlaces);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> CompletableFuture<List<Place>> getPlaces(SearchApiType searchApiType, SearchCriteria searchCriteria) {
+	private <T> List<Place> getPlaces(SearchApiType searchApiType, SearchCriteria searchCriteria) {
 
-		PlaceSearchApiRequest request = createPlaceSearchRequest(searchApiType, searchCriteria);
-		PlaceSearchApiResponse<T> response = placeSearchApiFactory.getSearchApi(searchApiType).searchPlaces(request);
+		return CompletableFuture.supplyAsync(() -> {
+									PlaceSearchApiRequest request = createPlaceSearchRequest(searchApiType, searchCriteria);
+									PlaceSearchApiResponse<T> response = placeSearchApiFactory.getSearchApi(searchApiType).searchPlaces(request);
+									PlaceMapper<T> mapper = (PlaceMapper<T>) mappers.get(searchApiType);
 
-		PlaceMapper<T> mapper = (PlaceMapper<T>) mappers.get(searchApiType);
-
-		return CompletableFuture.supplyAsync(() -> response.getResults().stream()
-														   .filter(Objects::nonNull)
-														   .map(mapper::toPlace)
-														   .collect(Collectors.toList()),
-											 taskExecutor)
+									return response.getResults()
+												   .stream()
+												   .filter(Objects::nonNull)
+												   .map(mapper::toPlace)
+												   .collect(Collectors.toList());
+								}, taskExecutor)
 								.exceptionally(ex -> {
 									log.error("Error occurred request {} API", searchApiType.name(), ex);
 									return List.of();
-								});
+								})
+								.join();
 	}
 
 	private PlaceSearchApiRequest createPlaceSearchRequest(SearchApiType searchApiType, SearchCriteria searchCriteria) {
