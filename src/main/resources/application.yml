@@ -12,9 +12,10 @@ spring:
 server:
   undertow:
     threads:
-      io: 8
-      worker: 128
+      io: 4
+      worker: 16
     direct-buffers: true
+    no-request-timeout: 60000 # 클라이언트 keep alive보다 크거나 같게 맞출것
   port: 8080
 
 place:
