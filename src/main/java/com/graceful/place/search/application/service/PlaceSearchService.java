@@ -28,9 +28,11 @@ import com.graceful.place.search.application.mapper.NaverPlaceMapper;
 import com.graceful.place.search.application.mapper.PlaceMapper;
 import com.graceful.place.search.application.merger.PlacesMergeStrategy;
 import com.graceful.place.search.application.port.in.PlaceSearchUseCase;
+import com.graceful.place.search.application.slicer.PlacesSliceStrategy;
 import com.graceful.place.search.domain.Place;
 import com.graceful.place.search.domain.Places;
 import com.graceful.place.search.domain.SearchApiType;
+import com.graceful.place.search.infrastructure.config.ApiProperties;
 
 @Slf4j
 @CacheConfig(cacheNames = "PLACE_SEARCH")
@@ -40,6 +42,9 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 
 	@Qualifier("placesMergeManager")
 	private final PlacesMergeStrategy placesMergeManager;
+
+	@Qualifier("placesSliceManager")
+	private final PlacesSliceStrategy placesSliceManager;
 
 	private final PlaceSearchApiFactory placeSearchApiFactory;
 
@@ -60,7 +65,12 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 		CompletableFuture<List<Place>> kakaoPlaceList = getPlaces(SearchApiType.KAKAO, searchCriteria);
 		CompletableFuture<List<Place>> naverPlaceList = getPlaces(SearchApiType.NAVER, searchCriteria);
 
-		return Places.from(placesMergeManager.merge(kakaoPlaceList.join(), naverPlaceList.join()));
+		List<Place> slicedNaverPlaces = placesSliceManager.slice(naverPlaceList.join(), ApiProperties.SIZE);
+
+		List<Place> kakaoPlaces = kakaoPlaceList.join();
+		List<Place> slicedKakaoPlaces = placesSliceManager.slice(kakaoPlaces, kakaoPlaces.size() - slicedNaverPlaces.size());
+
+		return Places.from(placesMergeManager.merge(slicedKakaoPlaces, slicedNaverPlaces));
 	}
 
 	@SuppressWarnings("unchecked")
