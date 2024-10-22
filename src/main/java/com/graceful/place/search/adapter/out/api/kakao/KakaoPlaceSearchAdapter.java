@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 
 import com.graceful.place.search.application.port.out.PlaceSearchPort;
-import com.graceful.place.search.infrastructure.config.ApiProperties;
+import com.graceful.place.search.config.PlaceSearchConfig;
 import com.graceful.place.search.infrastructure.external.HttpClient;
 
 
@@ -19,6 +19,7 @@ import com.graceful.place.search.infrastructure.external.HttpClient;
 @Component
 public class KakaoPlaceSearchAdapter implements PlaceSearchPort<KakaoPlaceSearchApiRequest, KakaoPlaceSearchApiResponse> {
 
+	private final PlaceSearchConfig config;
 	private final HttpClient httpClient;
 
 	@Override
@@ -27,9 +28,9 @@ public class KakaoPlaceSearchAdapter implements PlaceSearchPort<KakaoPlaceSearch
 		params.put("query", request.getKeyword());
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", ApiProperties.KAKAO_AUTH);
+		headers.set("Authorization", config.getApi().getKakao().getKey());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		return httpClient.get(ApiProperties.KAKAO_URL, params, headers, KakaoPlaceSearchApiResponse.class);
+		return httpClient.get(config.getApi().getKakao().getUrl(), params, headers, KakaoPlaceSearchApiResponse.class);
 	}
 }

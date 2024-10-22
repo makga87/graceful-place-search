@@ -23,7 +23,7 @@ public class KakaoPlaceMapper implements PlaceMapper<KakaoPlaceSearchApiResponse
 					.roadAddress(document.getRoadAddressName())
 					.x(document.getX())
 					.y(document.getY())
-					.priorityScore(1)
+					.priorityScore(SearchApiType.KAKAO.getAdditionalScore())
 					.searchApiType(SearchApiType.KAKAO)
 					.build();
 	}

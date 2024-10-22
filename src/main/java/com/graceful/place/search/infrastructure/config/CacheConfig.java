@@ -1,7 +1,6 @@
 package com.graceful.place.search.infrastructure.config;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentSkipListMap;
 

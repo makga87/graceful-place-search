@@ -13,6 +13,7 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import com.graceful.place.search.domain.Keyword;
 
 @Slf4j
 @Service
+@DependsOn("ehCacheManager")
 public class KeywordCachingService implements KeywordCachingUseCase {
 
 	private final Cache<String, Long> keywordCountCache;
@@ -66,14 +68,28 @@ public class KeywordCachingService implements KeywordCachingUseCase {
 	}
 
 	private List<Keyword> getKeywords() {
-		Set<String> keys = new HashSet<>();
-		keywordCountCache.forEach(entry -> keys.add(entry.getKey()));
+		try {
+			Set<String> keys = new HashSet<>();
 
-		return keywordCountCache.getAll(keys)
-								.entrySet()
-								.stream()
-								.map((entry) -> Keyword.of(entry.getKey(), entry.getValue()))
-								.collect(Collectors.toList());
+			keywordCountCache.forEach(entry -> {
+				if (entry != null && entry.getKey() != null) {
+					keys.add(entry.getKey());
+				}
+			});
+
+			if (keys.isEmpty()) {
+				return List.of();
+			}
+
+			return keywordCountCache.getAll(keys)
+									.entrySet()
+									.stream()
+									.map((entry) -> Keyword.of(entry.getKey(), entry.getValue()))
+									.collect(Collectors.toList());
+		} catch (Exception e) {
+			log.error("Exception occured when getting keywords", e);
+			return List.of();
+		}
 
 	}
 }

@@ -1,7 +1,6 @@
 package com.graceful.place.search.application.service;
 
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,10 +28,9 @@ import com.graceful.place.search.application.mapper.PlaceMapper;
 import com.graceful.place.search.application.merger.PlacesMergeStrategy;
 import com.graceful.place.search.application.port.in.PlaceSearchUseCase;
 import com.graceful.place.search.application.slicer.PlacesSliceStrategy;
+import com.graceful.place.search.config.PlaceSearchConfig;
 import com.graceful.place.search.domain.Place;
-import com.graceful.place.search.domain.Places;
 import com.graceful.place.search.domain.SearchApiType;
-import com.graceful.place.search.infrastructure.config.ApiProperties;
 
 @Slf4j
 @CacheConfig(cacheNames = "PLACE_SEARCH")
@@ -51,6 +49,8 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 	@Qualifier("taskExecutor")
 	private final Executor taskExecutor;
 
+	private final PlaceSearchConfig config;
+
 	private static final Map<SearchApiType, PlaceMapper<?>> mappers;
 
 	static {
@@ -60,17 +60,17 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 
 	@Cacheable(key = "#searchCriteria.keyword")
 	@Override
-	public Places placeSearch(SearchCriteria searchCriteria) {
+	public List<Place> placeSearch(SearchCriteria searchCriteria) {
 
 		CompletableFuture<List<Place>> kakaoPlaceList = getPlaces(SearchApiType.KAKAO, searchCriteria);
 		CompletableFuture<List<Place>> naverPlaceList = getPlaces(SearchApiType.NAVER, searchCriteria);
 
-		List<Place> slicedNaverPlaces = placesSliceManager.slice(naverPlaceList.join(), ApiProperties.SIZE);
+		List<Place> slicedNaverPlaces = placesSliceManager.slice(naverPlaceList.join(), config.getSize().getByApi());
 
 		List<Place> kakaoPlaces = kakaoPlaceList.join();
 		List<Place> slicedKakaoPlaces = placesSliceManager.slice(kakaoPlaces, kakaoPlaces.size() - slicedNaverPlaces.size());
 
-		return Places.from(placesMergeManager.merge(slicedKakaoPlaces, slicedNaverPlaces));
+		return placesMergeManager.merge(slicedKakaoPlaces, slicedNaverPlaces);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,7 +88,7 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 											 taskExecutor)
 								.exceptionally(ex -> {
 									log.error("Error occurred request {} API", searchApiType.name(), ex);
-									return Collections.EMPTY_LIST;
+									return List.of();
 								});
 	}
 

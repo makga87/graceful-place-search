@@ -8,8 +8,6 @@ spring:
   cache:
     jcache:
       config: /ehcache.xml
-  jmx:
-    enabled=true:
 
 server:
   undertow:
@@ -20,12 +18,22 @@ server:
   port: 8080
 
 place:
+  executor:
+    core-pool-size: 10
+    max-pool-size: 20
+    queue-capacity: 500
+  size:
+    by-api: 5
+    total: 10
   api:
     kakao:
+      url: "https://dapi.kakao.com/v2/local/search/keyword"
       key: "KakaoAK ee7cb1753cf90b82bcd6b8d22077a54d"
     naver:
+      url: "https://openapi.naver.com/v1/search/local.json"
       id: "RY_eugq1q7ek7P2_eAoo"
       secret: "C6K0RF11Yc"
+      display: 5
 
 logging:
   level:
@@ -34,4 +42,3 @@ logging:
     org.ehcache: DEBUG
     org.springframework.cache: DEBUG
 
----
