@@ -345,7 +345,7 @@ private boolean isSimilarLocation(Place place) {
 
 ### 2. bootJar가 생성된 경로인, 소스의 build/libs 폴더로 이동해 jar를 실행합니다.
 ```bash
-java -jar build/libs/graceful-place-search-0.0.1-SNAPSHOT.jar
+java -jar graceful-place-search-1.0.0-RELEASE.jar 
 ```
 
 ### 3. API 테스트용 curl을 실행합니다.
