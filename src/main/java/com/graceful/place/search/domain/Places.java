@@ -2,13 +2,13 @@ package com.graceful.place.search.domain;
 
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,7 +21,7 @@ public class Places implements Serializable {
 		return new Places(places);
 	}
 
-	public List<Place> getPlaceList() {
+	public List<Place> getList() {
 		return this.placeList;
 	}
 
@@ -29,12 +29,8 @@ public class Places implements Serializable {
 		return placeList.size();
 	}
 
+	@JsonIgnore
 	public Stream<Place> getAsStream() {
 		return placeList.stream();
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(new HashSet<>(placeList));
 	}
 }
