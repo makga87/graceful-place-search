@@ -7,13 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import com.graceful.place.search.adapter.out.api.PlaceSearchApiResponse;
 
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
-public class NaverPlaceSearchApiResponse implements PlaceSearchApiResponse {
+public class NaverPlaceSearchApiResponse implements PlaceSearchApiResponse<NaverPlaceSearchApiResponse.Item> {
 	private String lastBuildDate;
 	private int total;
 	private int start;
@@ -22,6 +24,7 @@ public class NaverPlaceSearchApiResponse implements PlaceSearchApiResponse {
 
 	@Builder
 	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class Item {
 		private String title;

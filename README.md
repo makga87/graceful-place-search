@@ -53,7 +53,20 @@
 
 # 2. 기술적 요구 사항
 
-### 2-1. 헥사고날 아키텍처 현재 소스 구조
+### 2-1. 헥사고날 아키텍처
+- 앞으로의 코드 유지보수와 확장성을 고려할 수 있는 클린 아키텍처 중, 헥사고날 아키텍처로 개발을 진행했습니다.
+
+
+- 각각의 외부와 인잡한 adapter (controller, api request)
+
+
+- adapter와 application 코드의 통로인 port(use case, port)
+
+
+- 핵심 비즈니스 로직인 application과 domain
+
+
+- 외부 인프라와 통신로직이 들어있는 infrastructure 등으로 구성했습니다.
 
 ### 2-2. 동시성 이슈 제어
 - 사용자가 특정 장소명으로 검색 시, Counting 서비스가 함께 실행되게 됩니다.
@@ -83,12 +96,35 @@ public Long incrementKeywordCache(String keyword) {
 ```
 
 ### 2-3. 검색 서비스 외부 API 장애 발생 시, 대응 방식
+- 2개 이상의 외부 연동 사이트 호출 시, 하나가 실패하더라도, 다른 하나가 성공하면, 해당 API응답 값으로 값을 세팅합니다.
+- 실패한 응답에 대해선, 예외를 전파하지 않고, 빈 배열로 응답합니다.
+```java
+private <T> List<Place> getPlaces(SearchApiType searchApiType, SearchCriteria searchCriteria) {
+
+		return CompletableFuture.supplyAsync(() -> {
+									PlaceSearchApiRequest request = createPlaceSearchRequest(searchApiType, searchCriteria);
+									PlaceSearchApiResponse<T> response = placeSearchApiFactory.getSearchApi(searchApiType).searchPlaces(request);
+									PlaceMapper<T> mapper = (PlaceMapper<T>) mappers.get(searchApiType);
+
+									return response.getResults()
+												   .stream()
+												   .filter(Objects::nonNull)
+												   .map(mapper::toPlace)
+												   .collect(Collectors.toList());
+								}, taskExecutor)
+								.exceptionally(ex -> {
+									log.error("Error occurred request {} API", searchApiType.name(), ex);
+									return List.of();
+								})
+								.join();
+}
+```
 
 ### 2-4. 대용량 트래픽 처리 대응
-1. EHCache로 장소 정보 및 검색어를 캐싱하였으며, 디스크에도 해당 정보를 저장하여, 서버 재기동시에도 영속화된 데이터를 재 캐싱하여 볼 수 있습니다.
+#### 1. EHCache로 장소 정보 및 검색어를 캐싱하였으며, 디스크에도 해당 정보를 저장하여, 서버 재기동시에도 영속화된 데이터를 재 캐싱하여 볼 수 있습니다.
 
 
-2. Undertow에 HttpHandler를 Semaphore를 추가하여, Backpressure 기능을 넣었습니다. 동시 처리가능 수를 넘어간 상황에서 지정한 타임아웃을 넘기면 Http status 429 Too Many Requests를 
+#### 2. Undertow에 HttpHandler를 Semaphore를 추가하여, Backpressure 기능을 넣었습니다. 동시 처리가능 수를 넘어간 상황에서 지정한 타임아웃을 넘기면 Http status 429 Too Many Requests를 
 응답하도록 개발하였습니다.
 ```java 
 @Bean
@@ -118,13 +154,12 @@ public UndertowServletWebServerFactory undertowFactory() {
 	return factory;
 }
 ```
-3. Cache Stempede 대응 방안 (?)
 
+#### 3. 테스트 범위
+- 작은 단위의 컴포넌트들의 테스트 코드를 작성했습니다.
+- 핵심이 되는 로직에 대해서만 수행하였고, 특별히 외부연동 API 장애 발생시처럼 실제 환경을 만들기 어려운 테스트들은 mock과 stub으로 테스트코드를 작성했습니다.
 
-4. 테스트 코드
-
-
-5. 향후, 추가 검색 API 서비스 연동 발생 시에는 다음과 같은 작업을 진행합니다. 
+#### 4. 향후, 추가 검색 API 서비스 연동 발생 시에는 다음과 같은 작업을 진행합니다. 
    1. PlaceSearchPort interface 구현 
    ```java
    public interface PlaceSearchPort<P extends PlaceSearchApiRequest, R extends PlaceSearchApiResponse> {
@@ -190,7 +225,7 @@ public UndertowServletWebServerFactory undertowFactory() {
     }
    ```
 
-6. 문자열 유사도, 위 경도 좌표 유사도 검증 로직
+#### 5. 문자열 유사도, 위 경도 좌표 유사도 검증 로직
 - 각각의 외부 연동 서비스 API의 응답 값에서, 장소명 / 지번 / 도로명 / 위경도 좌표에 대한 정의가 조금씩 다릅니다.
 
 
@@ -256,7 +291,7 @@ private boolean isSimilarLocation(Place place) {
 
 - 위 소스 내용을 요약하자면, 장소명이 유사하면서, 위치 정보 중 하나라도 유사하다면 동일한 두 장소는 동일하다라는 판단을 하는 로직입니다.
 
-7. 서버 재기동을 하더라도 검색 랭킹 API에 대한 일관성
+#### 6. 서버 재기동을 하더라도 검색 랭킹 API에 대한 일관성
 - 간혹 서버가 종료되어 인스턴스를 다시 올려야하는 경우가 있습니다.
 
 
@@ -298,9 +333,12 @@ private boolean isSimilarLocation(Place place) {
 ## 3-2. Circuit Breaker
 - 추후, Circuit Breaker 기능의 도입으로, 시스템 자원을 효율화하고, 장애전파를 방지할 수 있습니다.
 
+## 3-3. Cache Stempede
+- 추후, 캐시 만료 시점에 들어오는 API들이 다이렉트로 외부 스토리지를 호출하지 않도록, 추가적인 기능 개발 및 정책을 수립할 수 있습니다.
+
 # 4. API TEST 방법
 
-### 1. 소스 경로로 이동하여 bootJar 생성한다.
+### 1. 소스 경로로 이동하여 bootJar 생성합니다.
 ```bash
 ./gradlew clean bootJar
 ```

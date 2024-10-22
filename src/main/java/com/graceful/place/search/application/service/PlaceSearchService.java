@@ -66,7 +66,7 @@ public class PlaceSearchService implements PlaceSearchUseCase {
 		List<Place> naverPlaceList = getPlaces(SearchApiType.NAVER, searchCriteria);
 
 		List<Place> slicedNaverPlaces = placesSliceManager.slice(naverPlaceList, config.getSize().getByApi());
-		List<Place> slicedKakaoPlaces = placesSliceManager.slice(kakaoPlaceList, kakaoPlaceList.size() - slicedNaverPlaces.size());
+		List<Place> slicedKakaoPlaces = placesSliceManager.slice(kakaoPlaceList, slicedNaverPlaces.size());
 
 		return placesMergeManager.merge(slicedKakaoPlaces, slicedNaverPlaces);
 	}
