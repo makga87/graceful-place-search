@@ -23,8 +23,8 @@ public class PlacesSliceManager implements PlacesSliceStrategy {
 		}
 
 		if (places.size() - sliceSize > config.getSize().getTotal()) {
-			return places.subList(0, config.getSize().getTotal() - sliceSize - 1);
+			return places.subList(0, config.getSize().getTotal() - sliceSize);
 		}
-		return places.subList(0, sliceSize - 1);
+		return places.subList(0, sliceSize);
 	}
 }
