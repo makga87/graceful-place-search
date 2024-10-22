@@ -18,8 +18,9 @@ import com.graceful.place.search.adapter.in.api.PlaceSearchResponse;
 import com.graceful.place.search.application.SearchCriteria;
 import com.graceful.place.search.application.port.in.KeywordCachingUseCase;
 import com.graceful.place.search.application.port.in.PlaceSearchUseCase;
+import com.graceful.place.search.config.PlaceSearchConfig;
 import com.graceful.place.search.domain.Keyword;
-import com.graceful.place.search.domain.Places;
+import com.graceful.place.search.domain.Place;
 
 @RequiredArgsConstructor
 @RestController
@@ -32,15 +33,20 @@ public class PlaceSearchController {
 	@Qualifier("keywordCachingService")
 	private final KeywordCachingUseCase keywordCachingService;
 
+	private final PlaceSearchConfig config;
+
 	@GetMapping("/{keyword}")
 	public ResponseEntity<List<PlaceSearchResponse>> search(@PathVariable("keyword") String keyword) {
-		keywordCachingService.incrementKeywordCache(keyword);
-		Places places = placeSearchService.placeSearch(SearchCriteria.builder()
-																	 .keyword(keyword)
-																	 .size(5)
-																	 .build());
 
-		return ResponseEntity.ok(places.getAsStream()
+		keywordCachingService.incrementKeywordCache(keyword);
+
+		int size = config.getSize().getByApi();
+		List<Place> places = placeSearchService.placeSearch(SearchCriteria.builder()
+																		  .keyword(keyword)
+																		  .size(size)
+																		  .build());
+
+		return ResponseEntity.ok(places.stream()
 									   .map(place -> PlaceSearchResponse.from(place.getPlaceName()))
 									   .collect(Collectors.toList()));
 	}
@@ -48,7 +54,9 @@ public class PlaceSearchController {
 	@GetMapping("/search/keywords")
 	public ResponseEntity<List<KeywordSearchResponse>> searchKeywords() {
 
-		List<Keyword> keywords = keywordCachingService.getTopKeywords(10);
+		int limit = config.getSize().getTotal();
+
+		List<Keyword> keywords = keywordCachingService.getTopKeywords(limit);
 
 		return ResponseEntity.ok(keywords.stream()
 										 .map(keyword -> KeywordSearchResponse.of(keyword.getKeyword(), keyword.getCount()))

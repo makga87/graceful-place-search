@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 
 import com.graceful.place.search.application.port.out.PlaceSearchPort;
-import com.graceful.place.search.infrastructure.config.ApiProperties;
+import com.graceful.place.search.config.PlaceSearchConfig;
 import com.graceful.place.search.infrastructure.external.HttpClient;
 
 
@@ -19,6 +19,7 @@ import com.graceful.place.search.infrastructure.external.HttpClient;
 @Component
 public class NaverPlaceSearchAdapter implements PlaceSearchPort<NaverPlaceSearchApiRequest, NaverPlaceSearchApiResponse> {
 
+	private final PlaceSearchConfig config;
 	private final HttpClient httpClient;
 
 	@Override
@@ -29,10 +30,10 @@ public class NaverPlaceSearchAdapter implements PlaceSearchPort<NaverPlaceSearch
 		params.put("display", request.getDisplay());
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("X-Naver-Client-Id", ApiProperties.NAVER_CLIENT_ID);
-		headers.set("X-Naver-Client-Secret", ApiProperties.NAVER_CLIENT_SECRET);
+		headers.set("X-Naver-Client-Id", config.getApi().getNaver().getId());
+		headers.set("X-Naver-Client-Secret", config.getApi().getNaver().getSecret());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		return httpClient.get(ApiProperties.NAVER_URL, params, headers, NaverPlaceSearchApiResponse.class);
+		return httpClient.get(config.getApi().getNaver().getUrl(), params, headers, NaverPlaceSearchApiResponse.class);
 	}
 }

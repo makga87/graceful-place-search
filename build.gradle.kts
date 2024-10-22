@@ -7,6 +7,10 @@ plugins {
 group = "com.graceful.place.search"
 version = "0.0.1-SNAPSHOT"
 
+tasks.bootJar {
+    enabled = true
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(11)
@@ -43,8 +47,6 @@ dependencies {
 
     implementation("org.jsoup:jsoup:1.18.1")
     implementation("org.apache.commons:commons-text:1.12.0")
-
-
 
 }
 
