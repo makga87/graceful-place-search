@@ -90,6 +90,5 @@ public class KeywordCachingService implements KeywordCachingUseCase {
 			log.error("Exception occured when getting keywords", e);
 			return List.of();
 		}
-
 	}
 }
