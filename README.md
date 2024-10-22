@@ -349,12 +349,92 @@ java -jar build/libs/graceful-place-search-0.0.1-SNAPSHOT.jar
 ```
 
 ### 3. API 테스트용 curl을 실행합니다.
-#### 3-1. 장소 조회 API
+#### 3-1. 장소 조회 API 요청
 ```bash
 curl -X GET -H "Content-Type: application/json" http://localhost:8080/v1/places/${placeName}
 ```
+#### 3-1. 장소 조회 API 응답 예시
+```java
+[
+    {
+        "placeName": "일미아구찜"
+    },
+    {
+        "placeName": "일광아구찜"
+    },
+    {
+        "placeName": "광주똑순이아구찜"
+    },
+    {
+        "placeName": "포미아구찜"
+    },
+    {
+        "placeName": "청진동아구찜"
+    },
+    {
+        "placeName": "성수AGU"
+    },
+    {
+        "placeName": "개나리아구찜 본점"
+    },
+    {
+        "placeName": "복춘식당"
+    },
+    {
+        "placeName": "약수동해물텀벙"
+    },
+    {
+        "placeName": "소문난마산아구"
+    }
+]
+```
 
-#### 3-2. 키워드 랭킹 TOP10 조회 API
+#### 3-2. 키워드 랭킹 TOP10 조회 API 요청
 ```bash
-키워드 랭킹 TOP10 조회 API : curl -X GET -H "Content-Type: application/json" http://localhost:8080/v1/places/search/keywords
+curl -X GET -H "Content-Type: application/json" http://localhost:8080/v1/places/search/keywords
+```
+#### 3-2. 키워드 랭킹 TOP10 조회 API 응답 예시
+```java
+[
+    {
+        "keyword": "아구찜",
+        "searchCount": 72
+    },
+    {
+        "keyword": "쌀국수",
+        "searchCount": 3
+    },
+    {
+        "keyword": "칼국수",
+        "searchCount": 3
+    },
+    {
+        "keyword": "굴국밥",
+        "searchCount": 2
+    },
+    {
+        "keyword": "뱅크",
+        "searchCount": 2
+    },
+    {
+        "keyword": "멕시코",
+        "searchCount": 2
+    },
+    {
+        "keyword": "대모산",
+        "searchCount": 2
+    },
+    {
+        "keyword": "마북동",
+        "searchCount": 2
+    },
+    {
+        "keyword": "미국",
+        "searchCount": 2
+    },
+    {
+        "keyword": "보정역",
+        "searchCount": 2
+    }
+]
 ```
