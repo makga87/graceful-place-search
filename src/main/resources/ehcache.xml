@@ -10,13 +10,12 @@
 
     <ehcache:cache-template name="PLACE_SEARCH_TEMPLATE">
         <ehcache:expiry>
-            <ehcache:ttl unit="hours">24</ehcache:ttl>
+            <ehcache:ttl unit="minutes">5</ehcache:ttl>
         </ehcache:expiry>
 
         <ehcache:resources>
             <ehcache:heap unit="entries">1000</ehcache:heap>
             <ehcache:offheap unit="MB">50</ehcache:offheap>
-            <ehcache:disk unit="MB" persistent="true">100</ehcache:disk>
         </ehcache:resources>
     </ehcache:cache-template>
 
@@ -29,7 +28,7 @@
 
     <ehcache:cache-template name="PLACE_SEARCH_KEYWORD_COUNTER_TEMPLATE">
         <ehcache:expiry>
-            <ehcache:ttl unit="seconds">10</ehcache:ttl>
+            <ehcache:ttl unit="hours">24</ehcache:ttl>
         </ehcache:expiry>
 
         <ehcache:resources>

@@ -38,7 +38,7 @@ place:
 
 logging:
   level:
-    root: DEBUG
+    root: ERROR
     org.springframework.web.client: DEBUG
     org.ehcache: DEBUG
     org.springframework.cache: DEBUG

@@ -49,7 +49,6 @@ class PlacesSliceManagerTest {
 	@DisplayName("배열 사이즈-sliceSize가 10보다 작은 경우, sliceSize만큼 반환한다.")
 	@Test
 	void testSliceListSizeMinusSliceSizeLessThan10() {
-
 		PlaceSearchConfig.Size size = mock(PlaceSearchConfig.Size.class);
 		when(config.getSize()).thenReturn(size);
 		when(config.getSize().getTotal()).thenReturn(10);
@@ -69,7 +68,7 @@ class PlacesSliceManagerTest {
 
 		List<Place> result = placesSliceManager.slice(loop("kakao", 100), 6);
 
-		assertEquals(result.size(), 4);
+		assertEquals(4, result.size());
 
 	}
 

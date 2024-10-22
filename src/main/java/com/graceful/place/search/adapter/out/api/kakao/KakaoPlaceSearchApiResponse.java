@@ -7,10 +7,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.graceful.place.search.adapter.out.api.PlaceSearchApiResponse;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 public class KakaoPlaceSearchApiResponse implements PlaceSearchApiResponse<KakaoPlaceSearchApiResponse.Document> {
 
@@ -19,6 +23,7 @@ public class KakaoPlaceSearchApiResponse implements PlaceSearchApiResponse<Kakao
 
 	@Builder
 	@AllArgsConstructor
+	@NoArgsConstructor
 	@Data
 	public static class Document {
 		@JsonProperty("address_name")
